@@ -102,11 +102,12 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
 				rsltPixel[0]+=origImg[3*(row*imgWidth+col)+0]*kernel[(u+knlWidth/2)*knlWidth+v+knlHeight/2];
 				rsltPixel[1]+=origImg[3*(row*imgWidth+col)+1]*kernel[(u+knlWidth/2)*knlWidth+v+knlHeight/2];
 				rsltPixel[2]+=origImg[3*(row*imgWidth+col)+2]*kernel[(u+knlWidth/2)*knlWidth+v+knlHeight/2];		
-			}		
+			}
+		rsltPixel[0]=rsltPixel[0]/scale+offset;
+		rsltPixel[1]=rsltPixel[1]/scale+offset;
+		rsltPixel[2]=rsltPixel[2]/scale+offset;
 	}
-	rsltPixel[0]=rsltPixel[0]/scale+offset;
-	rsltPixel[1]=rsltPixel[1]/scale+offset;
-	rsltPixel[2]=rsltPixel[2]/scale+offset;
+
 
 }
 
