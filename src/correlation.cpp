@@ -39,7 +39,7 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
     int row, col;
     for(row=0;row<imgWidth;row++){
         for (col=0;col<imgHeight;col++){
-            pixel_filter(&(rsltImg[3*(row*imgWidth+col)+0]),row,col,origImg,imgWidth,imgHeight,kernel,knlWidth,knlHeight,scale,offset);
+            pixel_filter(&(rsltImg[3*(row*imgWidth+col)+0]),col,row,origImg,imgWidth,imgHeight,kernel,knlWidth,knlHeight,scale,offset);
         }
     }
 
