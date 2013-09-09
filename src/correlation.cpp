@@ -36,10 +36,10 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
                   double scale, double offset)
 {
     // Note: copying origImg to rsltImg is NOT the solution, it does nothing!
-    int row, col;
-    for(row=0;row<imgWidth;row++){
-        for (col=0;col<imgHeight;col++){
-            pixel_filter(&(rsltImg[3*(row*imgWidth+col)+0]),col,row,origImg,imgWidth,imgHeight,kernel,knlWidth,knlHeight,scale,offset);
+    int x, y;
+    for(y=0;y<imgWidth;y++){
+        for (x=0;x<imgHeight;x++){
+            pixel_filter(&(rsltImg[3*(y*imgWidth+x)+0]),x,y,origImg,imgWidth,imgHeight,kernel,knlWidth,knlHeight,scale,offset);
         }
     }
 
