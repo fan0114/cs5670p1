@@ -80,7 +80,33 @@ void pixel_filter(double rsltPixel[3], int x, int y, const unsigned char* origIm
                   const double* kernel, int knlWidth, int knlHeight,
                   double scale, double offset)
 {
-printf("TODO: %s:%d\n", __FILE__, __LINE__); 
+//	printf("TODO: %s:%d\n", __FILE__, __LINE__); 
+	int u, v; 
+	int row, col;
+	rsltPixel[0]=0;
+	rsltPixel[1]=0;
+	rsltPixel[2]=0;
+	if (x<=knlWidth/2||y<=knlHeight/2||(imgWidth-x)<=knlWidth/2||(imgHeight-y)<=knlHeight/2)
+		{
+			rsltPixel[0]=origImg[3*(y*imgWidth+x)+0];
+			rsltPixel[1]=origImg[3*(y*imgWidth+x)+1];
+			rsltPixel[2]=origImg[3*(y*imgWidth+x)+2];
+		}
+	else
+	{
+		for(u=-knlHeight/2;u<=knlHeight/2;u++)
+			for(v=-knlWidth/2;v<=knlWidth/2;v++)
+			{
+				row=u+y;
+				col=v+x;
+				rsltPixel[0]+=origImg[3*(row*imgWidth+col)+0]*kernel[(u+knlWidth/2)*knlWidth+v+knlHeight/2];
+				rsltPixel[1]+=origImg[3*(row*imgWidth+col)+1]*kernel[(u+knlWidth/2)*knlWidth+v+knlHeight/2];
+				rsltPixel[2]+=origImg[3*(row*imgWidth+col)+2]*kernel[(u+knlWidth/2)*knlWidth+v+knlHeight/2];		
+			}		
+	}
+	rsltPixel[0]=rsltPixel[0]/scale+offset;
+	rsltPixel[1]=rsltPixel[1]/scale+offset;
+	rsltPixel[2]=rsltPixel[2]/scale+offset;
 
 }
 
