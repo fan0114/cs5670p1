@@ -37,8 +37,8 @@ void image_filter(double* rsltImg, const unsigned char* origImg, const unsigned 
 {
     // Note: copying origImg to rsltImg is NOT the solution, it does nothing!
     int x, y;
-    for(y=0;y<imgWidth;y++){
-        for (x=0;x<imgHeight;x++){
+    for(y=0;y<imgHeight;y++){
+        for (x=0;x<imgWidth;x++){
             pixel_filter(&(rsltImg[3*(y*imgWidth+x)+0]),x,y,origImg,imgWidth,imgHeight,kernel,knlWidth,knlHeight,scale,offset);
         }
     }
