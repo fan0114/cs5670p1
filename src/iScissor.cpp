@@ -36,8 +36,49 @@ inline unsigned char PIXEL(const unsigned char* p, int i, int j, int c, int widt
 void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHeight)
 {
 	//printf("lolol TODO: %s:%d\n", __FILE__, __LINE__); 
+	int x,y;
+	int n;
+	int imgRGBSize = imgWidth * imgHeight * 3;
+	int imgSize=imgWidth*imgHeight;
+	double *D_RGB = new double [imgRGBSize];
+	double *Dlink=new double[8*imgSize];
+	double maxD;
 
+	for(n=0;n<8;n++)
+	{
+		image_filter(D_RGB, img, NULL, imgWidth, imgHeight,
+                     &kernels[n][0], 3, 3, 1, 0);
+		for(y=0;y<imgHeight;y++)
+			for(x=0;x<imgWidth;x++)
+			{
+				Dlink[n*imgSize+y*imgWidth+x]=
+					sqrt((D_RGB[3*(y*imgWidth+x)+0]*D_RGB[3*(y*imgWidth+x)+0]+
+					D_RGB[3*(y*imgWidth+x)+1]*D_RGB[3*(y*imgWidth+x)+1]+
+					D_RGB[3*(y*imgWidth+x)+2]*D_RGB[3*(y*imgWidth+x)+2])/3);
+			}
+	}//count D(link)
 
+	maxD=Dlink[0];
+	for(y=0;y<8;y++)
+	{
+		for(x=0;x<imgSize;x++)
+		{
+			if(Dlink[y*imgSize+x]>maxD)
+				maxD=Dlink[y*imgSize+x];
+		}
+	}//count maxDlink
+
+	for(y=0;y<imgHeight;y++)
+		for(x=0;x<imgWidth;x++)
+		{
+			nodes[y*imgWidth+x].row=y;
+			nodes[y*imgWidth+x].column=x;
+			for(n=0;n<8;n++)
+			{
+				nodes[y*imgWidth+x].linkCost[n]=
+					(maxD-Dlink[n*imgSize+y*imgWidth+x])*linkLengths[n];
+			}
+		}
 }
 /************************ END OF TODO 1 ***************************/
 
