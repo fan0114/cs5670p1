@@ -104,7 +104,7 @@ static int offsetToLinkIndex(int dx, int dy) {
 struct Comparator {
 
     bool operator()(const Node* left, const Node * right) {
-        return left->totalCost > right->totalCost;
+        return (left->totalCost) > (right->totalCost);
     }
 };
 
@@ -129,6 +129,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     Node * r[8];
     Node* q;
     int qy, qx, i, j;
+    double newCost;
     while (!pq.empty()) {
         q = pq.top();
         pq.pop();
@@ -180,7 +181,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                         r[i]->prevNode = q;
                     } else if ((r[i]->state) == ACTIVE) {
                         //fprintf(log, "\t\trenew\n");
-                        double newCost = (q->totalCost) + (q->linkCost[i]);
+                        newCost = (q->totalCost) + (q->linkCost[i]);
                         if (newCost < (r[i]->totalCost)) {
                             r[i]->totalCost = newCost;
                             r[i]->prevNode = q;
