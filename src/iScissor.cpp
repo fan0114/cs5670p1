@@ -3,14 +3,12 @@
  * (see also correlation.cpp and iScissor.h for additional TODOs) */
 
 #include <assert.h>
-#include <queue>
-#include <vector>
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 #include "correlation.h"
 #include "iScissor.h"
+#include "PriorityQueue.h"
 
 const double linkLengths[8] = {1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2, 1.0, SQRT2};
 
@@ -101,12 +99,6 @@ static int offsetToLinkIndex(int dx, int dy) {
  *		cost path from the seed to that node.
  */
 
-struct Comparator {
-
-    bool operator()(const Node* left, const Node * right) {
-        return (left->totalCost) > (right->totalCost);
-    }
-};
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded) {
     //printf("TODO: %s:%d\n", __FILE__, __LINE__); 
@@ -117,7 +109,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         printf("TODO: selection\n");
     }
     int nodeSize = width*height;
-    priority_queue<Node*, vector<Node*>, Comparator> pq;
+    CTypedPtrHeap<Node> pq;
     int x, y;
     for (x = 0; x < width; x++) {
         for (y = 0; y < height; y++) {
@@ -125,24 +117,23 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         }
     }
     nodes[width * seedY + seedX].totalCost = 0;
-    pq.push(&(nodes[width * seedY + seedX]));
+    pq.Insert(&(nodes[width * seedY + seedX]));
     Node * r[8];
     Node* q;
     int qy, qx, i, j;
     double newCost;
-    while (!pq.empty()) {
-        q = pq.top();
-        pq.pop();
+    while (!pq.IsEmpty()) {
+        q = pq.ExtractMin();
         q->state = EXPANDED;
         qy = q->row;
         qx = q->column;
 
         //fprintf(log, "qy:%d qx: %d qptr:%x totalcost:%f\n", qy, qx, q, q->totalCost);
 
-        memset(r, NULL, 8);
-        //        for (j = 0; j < 8; j++) {
-        //            r[j] = 0;
-        //        }
+        //memset(r, NULL, 8);
+        for (j = 0; j < 8; j++) {
+            r[j] = NULL;
+        }
 
         if ((width * (qy - 1) + qx - 1) >= 0 && (width * (qy - 1) + qx - 1) < nodeSize) {
             r[3] = &nodes[width * (qy - 1) + qx - 1];
@@ -176,15 +167,16 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                     if ((r[i]->state) == INITIAL) {
                         r[i]->totalCost = (q->totalCost) + (q->linkCost[i]);
                         //fprintf(log, "\t\tadd\n");
-                        pq.push(r[i]);
                         r[i]->state = ACTIVE;
                         r[i]->prevNode = q;
+                        pq.Insert(r[i]);
                     } else if ((r[i]->state) == ACTIVE) {
                         //fprintf(log, "\t\trenew\n");
                         newCost = (q->totalCost) + (q->linkCost[i]);
                         if (newCost < (r[i]->totalCost)) {
                             r[i]->totalCost = newCost;
                             r[i]->prevNode = q;
+                            pq.Update(r[i]);
                         }
                     }
                 }
@@ -192,6 +184,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         }
     }
     //fclose(log);
+    //free(&pq);
     printf("LiveWireDP end\n");
 
 }
@@ -214,11 +207,18 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height) {
     //printf("TODO: %s:%d\n", __FILE__, __LINE__); 
     printf("MinimumPath start\n");
+    //fflush(stdout);
     Node* inputNode = &(nodes[width * freePtY + freePtX]);
     path->AddTail(inputNode);
     while (inputNode->prevNode != NULL) {
         path->AddPrev(path->GetHeadPtr(), inputNode->prevNode);
         inputNode = inputNode->prevNode;
+    }
+    int i;
+    for (i = 0; i < width * height; i++) {
+        nodes[i].state = INITIAL;
+        nodes[i].prevNode = NULL;
+        nodes[i].totalCost = 0;
     }
     printf("MinimumPath end\n");
 
