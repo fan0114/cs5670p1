@@ -104,9 +104,9 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     //printf("TODO: %s:%d\n", __FILE__, __LINE__); 
     //FILE* log;
     //log = fopen("log.txt", "w");
-    //printf("LiveWireDP start\n");
+    //printf("LiveWireDP start numExpanded: %d\n",numExpanded);
     if (selection != NULL) {
-        printf("TODO: selection\n");
+        printf("LiveWireDP selection mode\n");
     }
     int nodeSize = width*height;
     CTypedPtrHeap<Node> pq;
@@ -123,12 +123,18 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     Node* q;
     int qy, qx, i, j;
     double newCost;
-    while (!pq.IsEmpty()) {
+	int count = 0;
+    while (!pq.IsEmpty() && count < numExpanded) {
+		count++;
         q = pq.ExtractMin();
-        q->state = EXPANDED;
-        qy = q->row;
+		qy = q->row;
         qx = q->column;
-
+		if (selection != NULL) {
+			if(selection[width*qy+qx]!=1){
+				goto endloop;
+			}
+		}
+        q->state = EXPANDED;
         //fprintf(log, "qy:%d qx: %d qptr:%x totalcost:%f\n", qy, qx, q, q->totalCost);
 
         //memset(r, NULL, 8);
@@ -183,6 +189,8 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                 }
             }
         }
+endloop:
+		;
     }
     //fclose(log);
     //free(&pq);
