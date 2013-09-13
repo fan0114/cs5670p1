@@ -33,7 +33,7 @@ inline unsigned char PIXEL(const unsigned char* p, int i, int j, int c, int widt
 
 void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHeight) {
     //printf("lolol TODO: %s:%d\n", __FILE__, __LINE__); 
-    printf("InitNodeBuf start\n");
+    //printf("InitNodeBuf start\n");
     int x, y;
     int n;
     int imgRGBSize = imgWidth * imgHeight * 3;
@@ -71,7 +71,7 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
                         (maxD - Dlink[n * imgSize + y * imgWidth + x]) * linkLengths[n];
             }
         }
-    printf("InitNodeBuf end\n");
+    //printf("InitNodeBuf end\n");
 
 }
 
@@ -104,7 +104,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     //printf("TODO: %s:%d\n", __FILE__, __LINE__); 
     //FILE* log;
     //log = fopen("log.txt", "w");
-    printf("LiveWireDP start\n");
+    //printf("LiveWireDP start\n");
     if (selection != NULL) {
         printf("TODO: selection\n");
     }
@@ -117,6 +117,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         }
     }
     nodes[width * seedY + seedX].totalCost = 0;
+	nodes[width * seedY + seedX].prevNode = NULL;
     pq.Insert(&(nodes[width * seedY + seedX]));
     Node * r[8];
     Node* q;
@@ -185,7 +186,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
     }
     //fclose(log);
     //free(&pq);
-    printf("LiveWireDP end\n");
+    //printf("LiveWireDP end\n");
 
 }
 /************************ END OF TODO 4 ***************************/
@@ -206,7 +207,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
 
 void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* nodes, int width, int height) {
     //printf("TODO: %s:%d\n", __FILE__, __LINE__); 
-    printf("MinimumPath start\n");
+    //printf("MinimumPath start\n");
     //fflush(stdout);
     Node* inputNode = &(nodes[width * freePtY + freePtX]);
     path->AddTail(inputNode);
@@ -220,7 +221,7 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
         nodes[i].prevNode = NULL;
         nodes[i].totalCost = 0;
     }
-    printf("MinimumPath end\n");
+    //printf("MinimumPath end\n");
 
 }
 /************************ END OF TODO 5 ***************************/
