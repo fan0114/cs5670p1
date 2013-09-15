@@ -99,6 +99,14 @@ static int offsetToLinkIndex(int dx, int dy) {
  *		cost path from the seed to that node.
  */
 
+int numNodesInPath(Node * node) {
+    int count = 0;
+    while (node->prevNode != NULL) {
+        count++;
+        node = node->prevNode;
+    }
+    return count;
+}
 
 void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const unsigned char* selection, int numExpanded) {
     //printf("TODO: %s:%d\n", __FILE__, __LINE__); 
@@ -117,23 +125,23 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
         }
     }
     nodes[width * seedY + seedX].totalCost = 0;
-	nodes[width * seedY + seedX].prevNode = NULL;
+    nodes[width * seedY + seedX].prevNode = NULL;
     pq.Insert(&(nodes[width * seedY + seedX]));
     Node * r[8];
     Node* q;
     int qy, qx, i, j;
     double newCost;
-	int count = 0;
+    int count = 0;
     while (!pq.IsEmpty() && count < numExpanded) {
-		count++;
+        count++;
         q = pq.ExtractMin();
-		qy = q->row;
+        qy = q->row;
         qx = q->column;
-		if (selection != NULL) {
-			if(selection[width*qy+qx]!=1){
-				goto endloop;
-			}
-		}
+        if (selection != NULL) {
+            if (selection[width * qy + qx] != 1) {
+                goto endloop;
+            }
+        }
         q->state = EXPANDED;
         //fprintf(log, "qy:%d qx: %d qptr:%x totalcost:%f\n", qy, qx, q, q->totalCost);
 
@@ -184,13 +192,22 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                             r[i]->totalCost = newCost;
                             r[i]->prevNode = q;
                             pq.Update(r[i]);
+                            //extra credit: the 6th whistle
+                        } else if (newCost = (r[i]->totalCost)) {
+                            //calculate real path length
+                            if ((numNodesInPath(q) + 1) < numNodesInPath(r[i])) {
+                                r[i]->totalCost = newCost;
+                                r[i]->prevNode = q;
+                                pq.Update(r[i]);
+                            }
                         }
                     }
                 }
             }
         }
+
 endloop:
-		;
+        ;
     }
     //fclose(log);
     //free(&pq);
@@ -225,6 +242,7 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
     }
     int i;
     for (i = 0; i < width * height; i++) {
+
         nodes[i].state = INITIAL;
         nodes[i].prevNode = NULL;
         nodes[i].totalCost = 0;
@@ -245,6 +263,7 @@ void MinimumPath(CTypedPtrDblList <Node>* path, int freePtX, int freePtY, Node* 
  */
 
 void SeedSnap(int& x, int& y, unsigned char* img, int width, int height) {
+
     printf("SeedSnap in iScissor.cpp: to be implemented for extra credit!\n");
 }
 
