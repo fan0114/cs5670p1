@@ -216,7 +216,7 @@ void LiveWireDP(int seedX, int seedY, Node* nodes, int width, int height, const 
                             r[i]->prevNode = q;
                             pq.Update(r[i]);
                             //extra credit: the 6th whistle
-                        } else if (newCost = (r[i]->totalCost)) {
+                        } else if (newCost == (r[i]->totalCost)) {
                             //calculate real path length
                             if ((numNodesInPath(q) + 1) < numNodesInPath(r[i])) {
                                 r[i]->totalCost = newCost;
