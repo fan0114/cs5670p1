@@ -41,9 +41,32 @@ void InitNodeBuf(Node* nodes, const unsigned char* img, int imgWidth, int imgHei
     double *D_RGB = new double [imgRGBSize];
     double *Dlink = new double[8 * imgSize];
     double maxD;
+	int scale=16;
+/*	const double Kernel_filter[9]=
+	{
+		1,1,1,
+		1,1,1,
+		1,1,1
+	};//mean filter*/
+
+	const double Kernel_filter[9]=
+	{
+		1,2,1,
+		2,4,2,
+		1,2,1
+	};
+
+	double *filterImg = new double [imgRGBSize];
+	unsigned char *ImgChar=new unsigned char [imgRGBSize];
+	image_filter(filterImg, img, NULL, imgWidth, imgHeight,
+                &Kernel_filter[0], 3, 3, scale, 0);//modify the link costs to have the effect of blurring the image before calculating the derivatives
+
+    for (int i = 0; i < imgRGBSize; i++) {
+        ImgChar[i] = filterImg[i];
+    }
 
     for (n = 0; n < 8; n++) {
-        image_filter(D_RGB, img, NULL, imgWidth, imgHeight,
+        image_filter(D_RGB, ImgChar, NULL, imgWidth, imgHeight,
                 &kernels[n][0], 3, 3, 1, 0);
         for (y = 0; y < imgHeight; y++)
             for (x = 0; x < imgWidth; x++) {
